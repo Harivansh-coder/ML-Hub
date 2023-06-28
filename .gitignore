@@ -1,0 +1,36 @@
+# Ignore virtual environment files
+venv/
+env/
+
+# Ignore compiled Python files
+*.pyc
+
+# Ignore the build directory
+build/
+
+# Ignore local development settings
+settings.ini
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+
+# Ignore package dependencies (you might want to adjust this based on your package manager)
+pip-lock.txt
+poetry.lock
+
+# Ignore logs and other temporary files
+*.log
+*.swp
+*.swo
+*.swn
+
+# Ignore generated API documentation
+docs/
+
+# Ignore local database files
+db.sqlite3
+
+# Ignore deployment-specific files
+docker-compose.yml
+docker-compose.override.yml
