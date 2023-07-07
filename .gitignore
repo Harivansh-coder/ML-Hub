@@ -30,6 +30,7 @@ docs/
 
 # Ignore local database files
 db.sqlite3
+*.db
 
 # Ignore deployment-specific files
 docker-compose.yml

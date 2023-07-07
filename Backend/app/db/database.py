@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 # database connection string
-SQLALCHEMY_DATABASE_URL = "sqlite:///./app/database/mlhub.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./app/db/mlhub.db"
 
 # create database engine
 engine = create_engine(
