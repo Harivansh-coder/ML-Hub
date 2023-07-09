@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.schemas.user import User
 from app.utils.verify_hash import hash_password
+from app.utils.oauth2 import get_current_user
 
 # create router instance for user management routes
 router = APIRouter(
@@ -46,15 +47,20 @@ async def create_user(user: UserRequest, db: Session = Depends(get_db)):
 
 # get all users route
 @router.get("/all", status_code=status.HTTP_200_OK, response_model=list[UserResponse])
-async def get_all_users(db: Session = Depends(get_db)):
+async def get_all_users(
+    db: Session = Depends(get_db), _: int = Depends(get_current_user)
+):
     return db.query(User).all()
 
 
 # get a user route
-@router.get("/{user_id}", status_code=status.HTTP_200_OK, response_model=UserResponse)
-async def get_user(user_id: int, db: Session = Depends(get_db)):
+@router.get("/", status_code=status.HTTP_200_OK, response_model=UserResponse)
+async def get_user(
+    db: Session = Depends(get_db),
+    current_user: int = Depends(get_current_user),
+):
     # get user from database
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(User).filter(User.id == current_user.id).first()
 
     # raise exception if user does not exist
     if user is None:
@@ -66,10 +72,14 @@ async def get_user(user_id: int, db: Session = Depends(get_db)):
 
 
 # update a user route
-@router.put("/{user_id}", status_code=status.HTTP_200_OK, response_model=UserResponse)
-async def update_user(user_id: int, user: UserRequest, db: Session = Depends(get_db)):
+@router.put("/", status_code=status.HTTP_200_OK, response_model=UserResponse)
+async def update_user(
+    user: UserRequest,
+    db: Session = Depends(get_db),
+    current_user: int = Depends(get_current_user),
+):
     # get user from database
-    user_to_update = db.query(User).filter(User.id == user_id).first()
+    user_to_update = db.query(User).filter(User.id == current_user.id).first()
 
     # raise exception if user does not exist
     if user_to_update is None:
