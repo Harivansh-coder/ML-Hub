@@ -18,7 +18,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 # create access token function to create jwt access token
-def access_token(data: dict):
+def create_access_token(data: dict):
     # create jwt payload
     to_encode = data.copy()
     # get current time
