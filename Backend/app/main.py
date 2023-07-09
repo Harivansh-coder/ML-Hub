@@ -2,7 +2,7 @@
 
 # Import FastAPI
 from fastapi import FastAPI
-from app.routers import user
+from app.routers import user, auth
 
 # Import database functions
 from app.db.database import create_db
@@ -23,3 +23,6 @@ async def root():
 
 # Include user router
 app.include_router(user.router)
+
+# Include auth router
+app.include_router(auth.router)
