@@ -1,10 +1,11 @@
 # routes for user management
 
 from fastapi import APIRouter, status, Depends, HTTPException
-from app.models.user import UserRequest
+from app.models.user import UserRequest, UserResponse
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.schemas.user import User
+from app.utils.verify_hash import hash_password
 
 # create router instance for user management routes
 router = APIRouter(
@@ -15,7 +16,9 @@ router = APIRouter(
 
 
 # user creation route
-@router.post("/create", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/create", status_code=status.HTTP_201_CREATED, response_model=UserResponse
+)
 async def create_user(user: UserRequest, db: Session = Depends(get_db)):
     # check if user already exists
     user_already_exists = (
@@ -28,6 +31,9 @@ async def create_user(user: UserRequest, db: Session = Depends(get_db)):
             status_code=status.HTTP_409_CONFLICT, detail="User already exists"
         )
 
+    # hash user password
+    user.password = hash_password(user.password)
+
     # create new user
     new_user = User(**user.dict())
     # add new user to database
@@ -35,17 +41,17 @@ async def create_user(user: UserRequest, db: Session = Depends(get_db)):
     # commit changes to database
     db.commit()
     db.refresh(new_user)
-    return {"data": new_user}
+    return new_user
 
 
 # get all users route
-@router.get("/all", status_code=status.HTTP_200_OK)
+@router.get("/all", status_code=status.HTTP_200_OK, response_model=list[UserResponse])
 async def get_all_users(db: Session = Depends(get_db)):
-    return {"data": db.query(User).all()}
+    return db.query(User).all()
 
 
 # get a user route
-@router.get("/{user_id}", status_code=status.HTTP_200_OK)
+@router.get("/{user_id}", status_code=status.HTTP_200_OK, response_model=UserResponse)
 async def get_user(user_id: int, db: Session = Depends(get_db)):
     # get user from database
     user = db.query(User).filter(User.id == user_id).first()
@@ -56,11 +62,11 @@ async def get_user(user_id: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist"
         )
 
-    return {"data": user}
+    return user
 
 
 # update a user route
-@router.put("/{user_id}", status_code=status.HTTP_200_OK)
+@router.put("/{user_id}", status_code=status.HTTP_200_OK, response_model=UserResponse)
 async def update_user(user_id: int, user: UserRequest, db: Session = Depends(get_db)):
     # get user from database
     user_to_update = db.query(User).filter(User.id == user_id).first()
@@ -75,9 +81,8 @@ async def update_user(user_id: int, user: UserRequest, db: Session = Depends(get
     user_to_update.username = user.username
     user_to_update.email = user.email
     user_to_update.password = user.password
-    user_to_update.role = user.role
 
     # commit changes to database
     db.commit()
     db.refresh(user_to_update)
-    return {"data": user_to_update}
+    return user_to_update
