@@ -63,16 +63,16 @@ async def get_user(
     user = db.query(User).filter(User.id == current_user.id).first()
 
     # raise exception if user does not exist
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist"
-        )
+    # if user is None:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist"
+    #     )
 
     return user
 
 
 # update a user route
-@router.put("/", status_code=status.HTTP_200_OK, response_model=UserResponse)
+@router.patch("/", status_code=status.HTTP_200_OK, response_model=UserResponse)
 async def update_user(
     user: UserRequest,
     db: Session = Depends(get_db),
@@ -82,10 +82,10 @@ async def update_user(
     user_to_update = db.query(User).filter(User.id == current_user.id).first()
 
     # raise exception if user does not exist
-    if user_to_update is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist"
-        )
+    # if user_to_update is None:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist"
+    #     )
 
     # update user details
     user_to_update.username = user.username

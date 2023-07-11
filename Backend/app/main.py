@@ -2,7 +2,7 @@
 
 # Import FastAPI
 from fastapi import FastAPI
-from app.routers import user, auth
+from app.routers import user, auth, ml
 
 # Import database functions
 from app.db.database import create_db
@@ -26,3 +26,6 @@ app.include_router(user.router)
 
 # Include auth router
 app.include_router(auth.router)
+
+# Include ML router
+app.include_router(ml.router)
