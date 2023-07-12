@@ -2,6 +2,8 @@
 
 # import dependencies
 from fastapi import APIRouter
+from app.handlers.summary import generate_summary
+from app.models.ml_request import MLRequest
 
 # create router instance for machine learning routes
 router = APIRouter(
@@ -12,11 +14,11 @@ router = APIRouter(
 
 
 # machine learning routes
-@router.get("/summary/{text}")
-def summarize_text(text: str):
+@router.post("/summarize")
+def summarize_text(text: MLRequest):
     # summarize text using extractive summarization
 
-    return {"message": "summarized text"}
+    return {"summary": generate_summary(text.text)}
 
 
 # AI content detection
