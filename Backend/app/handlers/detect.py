@@ -101,3 +101,42 @@ predicted_label = torch.argmax(outputs.logits, dim=1).item()
 print(
     f"Predicted label for new text: {predicted_label} (1 represents AI, 0 represents non-AI)"
 )
+
+
+
+
+
+import tensorflow as tf
+import time
+
+# Define the size of the computation
+matrix_size = 1000
+
+# Create a TensorFlow graph
+graph = tf.Graph()
+with graph.as_default():
+    # Create placeholder for input matrix
+    input_matrix = tf.placeholder(tf.float32, shape=(matrix_size, matrix_size))
+
+    # Perform a simple matrix multiplication
+    output_matrix = tf.matmul(input_matrix, input_matrix)
+
+# Create session and run the computation
+with tf.Session(graph=graph) as sess:
+    # Generate random input matrix
+    input_data = tf.random.normal((matrix_size, matrix_size))
+
+    # Benchmark GPU performance
+    with tf.device('/gpu:0'):
+        start_time = time.time()
+        result_gpu = sess.run(output_matrix, feed_dict={input_matrix: input_data.eval()})
+        gpu_time = time.time() - start_time
+        print("GPU Time: %.2f seconds" % gpu_time)
+
+    # Benchmark CPU performance
+    with tf.device('/cpu:0'):
+        start_time = time.time()
+        result_cpu = sess.run(output_matrix, feed_dict={input_matrix: input_data.eval()})
+        cpu_time = time.time() - start_time
+        print("CPU Time: %.2f seconds" % cpu_time)
+
