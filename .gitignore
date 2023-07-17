@@ -32,5 +32,9 @@ docs/
 db.sqlite3
 *.db
 
+# ml model ignore
+*.pkl
+*.pt
+
 # Ignore deployment-specific files
 docker-compose.override.yml
