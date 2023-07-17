@@ -4,6 +4,7 @@
 from fastapi import APIRouter
 from app.handlers.summary import generate_summary
 from app.models.ml_request import MLRequest
+from app.handlers.detect import predict
 
 # create router instance for machine learning routes
 router = APIRouter(
@@ -22,11 +23,12 @@ def summarize_text(text: MLRequest):
 
 
 # AI content detection
-@router.get("/detect/{text}")
-def detect_content(text: str):
+@router.post("/detect")
+def detect_content(text: MLRequest):
     # detect content using BERT
 
-    return {"message": "detected content"}
+    content_type = "true" if predict(text.text) == 1 else "false"
+    return {"AI content detected": content_type}
 
 
 # AI content generation
