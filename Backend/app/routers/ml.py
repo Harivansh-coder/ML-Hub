@@ -3,7 +3,8 @@
 # import dependencies
 from fastapi import APIRouter
 from app.handlers.summary import generate_summary
-from app.models.ml_request import MLRequest
+from app.handlers.similarity import check_text_similarity
+from app.models.ml_request import MLRequest, SimilarityRequest
 from app.handlers.detect import predict
 
 # create router instance for machine learning routes
@@ -32,16 +33,27 @@ def detect_content(text: MLRequest):
 
 
 # AI content generation
-@router.get("/generate/{text}")
-def generate_content(text: str):
+@router.get("/generate")
+def generate_content(text: MLRequest):
     # generate content using GPT-2
 
     return {"message": "generated content"}
 
 
 # AI rephrasing text
-@router.post("/rephrase/{text}")
-def rephrase_text(text: str):
+@router.post("/rephrase")
+def rephrase_text(text: MLRequest):
     # rephrase text using GPT-2
 
     return {"message": "rephrased text"}
+
+
+# AI similarity check
+@router.post("/similarity")
+def check_similarity(playload: SimilarityRequest):
+    # check similarity between two texts using BERT
+    similarity_scaore = check_text_similarity(playload.text1, playload.text2)
+    if similarity_scaore > 0.8:
+        return {"message": "similar content"}
+    else:
+        return {"message": "not similar content"}
